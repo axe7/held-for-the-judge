@@ -7,6 +7,10 @@ to relax: the rope creaking once and then going still, sunlight falling
 through leaves in slow coins, a dog sighing in its sleep. The closing
 image lingers -- the trees do the holding, so the reader only has to lie
 in it.
+
+Before writing, the entry is checked: it must be non-blank and between
+1 and 280 Unicode code points, so a bad edit fails loudly instead of
+producing a malformed entry.
 """
 
 import os
@@ -22,6 +26,12 @@ TEXT = (
 
 
 def main() -> None:
+    if not TEXT.strip():
+        raise ValueError("entry text must be non-blank")
+    if not 1 <= len(TEXT) <= 280:
+        raise ValueError(
+            f"entry text must be 1-280 Unicode code points, got {len(TEXT)}"
+        )
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
